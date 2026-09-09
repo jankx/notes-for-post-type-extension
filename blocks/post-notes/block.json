@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "jankx/post-notes",
+    "title": "Post Notes",
+    "category": "jankx",
+    "icon": "edit",
+    "description": "Hiển thị ghi chú (notes) của bài viết/post ra frontend.",
+    "textdomain": "jankx",
+    "usesContext": ["postId", "postType"],
+    "attributes": {
+        "title": { "type": "string", "default": "" },
+        "prefix": { "type": "string", "default": "" },
+        "showWhenEmpty": { "type": "boolean", "default": false },
+        "emptyText": { "type": "string", "default": "" },
+        "tagName": { "type": "string", "default": "div" },
+        "jankxHideOnUltrawide": { "type": "boolean", "default": false },
+        "jankxHideOnPc": { "type": "boolean", "default": false },
+        "jankxHideOnTablet": { "type": "boolean", "default": false },
+        "jankxHideOnMobile": { "type": "boolean", "default": false }
+    },
+    "supports": {
+        "html": false,
+        "color": {
+            "text": true,
+            "background": true
+        },
+        "typography": {
+            "fontSize": true,
+            "lineHeight": true,
+            "fontFamily": true,
+            "fontWeight": true
+        },
+        "spacing": {
+            "margin": true,
+            "padding": true
+        }
+    },
+    "editorScript": "file:./build/index.tsx.js",
+    "style": "file:./build/style.css",
+    "editorStyle": "file:./build/editor.css"
+}
