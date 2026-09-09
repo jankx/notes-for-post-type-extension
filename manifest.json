@@ -1,0 +1,18 @@
+{
+    "name": "Notes for Post Type",
+    "version": "1.0.0",
+    "description": "Thêm metabox ghi chú (notes) cho các post type được chọn, cho phép quản trị viên lưu ghi chú nội bộ cho mỗi bài viết.",
+    "author": "Jankx",
+    "extension_id": "notes-for-post-type",
+    "context": ["admin"],
+    "caller": {
+        "file": "NotesForPostTypeExtension.php",
+        "class": "Jankx\\Extensions\\NotesForPostType\\NotesForPostTypeExtension",
+        "method": "init"
+    },
+    "requirements": {
+        "php": ">=7.4"
+    },
+    "auto_activate": true,
+    "settings_url": "admin.php?page=jankx-notes-for-post-type"
+}
