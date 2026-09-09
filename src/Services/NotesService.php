@@ -30,6 +30,11 @@ class NotesService
      */
     public function getOption(string $key, $default = null)
     {
+        $themeMod = get_theme_mod($key);
+        if ($themeMod !== false && !is_null($themeMod)) {
+            return $themeMod;
+        }
+
         $options = get_option('jankx_options', []);
         if (is_array($options) && array_key_exists($key, $options)) {
             return $options[$key];

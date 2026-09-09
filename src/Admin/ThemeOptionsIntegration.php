@@ -46,18 +46,28 @@ class ThemeOptionsIntegration
         }
         $this->injected = true;
 
+        error_log('NotesForPostType: injectPage() called');
+
         $framework = $this->getFramework();
         if (!$framework) {
+            error_log('NotesForPostType: getFramework() returned null - framework not available');
             return;
         }
 
+        error_log('NotesForPostType: framework found, pages count: ' . count($framework->pages ?? []));
+
         foreach ($framework->pages as $existing) {
             if (($existing->getId() ?? '') === self::PAGE_ID) {
+                error_log('NotesForPostType: page already exists, skipping');
                 return;
             }
         }
 
-        $saved = get_option('jankx_options', []);
+        $saved = [
+            NotesService::OPTION_ENABLED => $this->service->getOption(NotesService::OPTION_ENABLED, 1),
+            NotesService::OPTION_POST_TYPES => $this->service->getOption(NotesService::OPTION_POST_TYPES, null),
+        ];
+        error_log('NotesForPostType: saved options: ' . print_r($saved, true));
 
         $page = new Page(__('Notes for Post Type', 'jankx'), [], 'dashicons-before dashicons-edit-page');
         $page->setId(self::PAGE_ID);
@@ -101,10 +111,14 @@ class ThemeOptionsIntegration
     {
         try {
             $adapter = OptionFramework::getActiveFramework();
+            error_log('NotesForPostType: getFramework() adapter = ' . ($adapter ? get_class($adapter) : 'null'));
             if ($adapter && method_exists($adapter, 'getFramework')) {
-                return $adapter->getFramework();
+                $framework = $adapter->getFramework();
+                error_log('NotesForPostType: getFramework() framework = ' . ($framework ? get_class($framework) : 'null'));
+                return $framework;
             }
         } catch (\Exception $e) {
+            error_log('NotesForPostType: getFramework() exception: ' . $e->getMessage());
         }
         return null;
     }
