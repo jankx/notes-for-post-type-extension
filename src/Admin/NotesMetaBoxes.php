@@ -52,6 +52,9 @@ class NotesMetaBoxes
     /**
      * Render the notes metabox.
      *
+     * Uses the full WordPress editor (wp_editor) so admins can compose
+     * rich content, not just plain text.
+     *
      * @param \WP_Post $post Current post object.
      */
     public function renderMetaBox(\WP_Post $post): void
@@ -59,18 +62,20 @@ class NotesMetaBoxes
         wp_nonce_field(self::NONCE_ACTION, self::NONCE_NAME);
 
         $note = $this->service->getNote($post->ID);
-        ?>
-        <p>
-            <label for="jankx_notes"><?php esc_html_e('Ghi chú nội bộ (chỉ hiển thị trong admin):', 'jankx'); ?></label>
-        </p>
-        <textarea
-            id="jankx_notes"
-            name="jankx_notes"
-            rows="6"
-            class="large-text"
-            placeholder="<?php esc_attr_e('Nhập ghi chú cho bài viết này...', 'jankx'); ?>"
-        ><?php echo esc_textarea($note); ?></textarea>
-        <?php
+
+        wp_editor(
+            $note,
+            'jankx_notes',
+            [
+                'textarea_name' => 'jankx_notes',
+                'textarea_rows' => 10,
+                'media_buttons' => true,
+                'teeny'         => false,
+                'tinymce'       => true,
+                'quicktags'     => true,
+                'wpautop'       => true,
+            ]
+        );
     }
 
     /**
@@ -90,7 +95,7 @@ class NotesMetaBoxes
             return;
         }
 
-        $note = isset($_POST['jankx_notes']) ? sanitize_textarea_field(wp_unslash($_POST['jankx_notes'])) : '';
+        $note = isset($_POST['jankx_notes']) ? wp_kses_post(wp_unslash($_POST['jankx_notes'])) : '';
         $this->service->saveNote($postId, $note);
     }
 }

@@ -45,6 +45,13 @@ class PostNotesBlock extends Block
             return '';
         }
 
+        // The note is now composed with the full WP editor, so render its
+        // HTML content instead of escaping it as plain text.
+        $renderedNote = wp_kses_post($note);
+        if (!preg_match('/<(p|div|ul|ol|h[1-6]|blockquote|pre|table|img)\b/i', $renderedNote)) {
+            $renderedNote = wpautop($renderedNote);
+        }
+
         $wrapperAttrs = get_block_wrapper_attributes([
             'class' => 'wp-block-jankx-post-notes jankx-post-notes' . ($isEditor ? ' is-editor-preview' : ''),
         ]);
@@ -59,7 +66,7 @@ class PostNotesBlock extends Block
                 <?php if (!empty($prefix)): ?>
                     <span class="jankx-post-notes__prefix"><?php echo esc_html($prefix); ?></span>
                 <?php endif; ?>
-                <div class="jankx-post-notes__text"><?php echo wp_kses_post(nl2br(esc_html($note))); ?></div>
+                <div class="jankx-post-notes__text"><?php echo $renderedNote; ?></div>
             </div>
         </<?php echo esc_attr($tagName); ?>>
         <?php

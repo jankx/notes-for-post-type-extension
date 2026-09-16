@@ -150,10 +150,10 @@ class NotesService
     {
         foreach ($this->getAllowedPostTypes() as $postType) {
             register_post_meta($postType, self::META_KEY, [
-                'type' => 'string',
-                'single' => true,
-                'sanitize_callback' => 'sanitize_textarea_field',
-                'show_in_rest' => true,
+                'type'              => 'string',
+                'single'            => true,
+                'sanitize_callback' => 'wp_kses_post',
+                'show_in_rest'      => true,
             ]);
         }
     }
