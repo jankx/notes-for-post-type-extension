@@ -7,6 +7,7 @@ use Jankx\Dashboard\Factories\FieldFactory;
 use Jankx\Dashboard\Elements\Page;
 use Jankx\Dashboard\Elements\Section;
 use Jankx\Adapter\Options\Framework as OptionFramework;
+use Jankx\Adapter\Options\Helper;
 
 /**
  * Theme Options Integration
@@ -63,8 +64,11 @@ class ThemeOptionsIntegration
             }
         }
 
-        $saved = get_option('jankx_options', []);
-        error_log('NotesForPostType: saved options from jankx_options: ' . print_r($saved, true));
+        $saved = [
+            NotesService::OPTION_ENABLED => Helper::getOption(NotesService::OPTION_ENABLED, 1),
+            NotesService::OPTION_POST_TYPES => Helper::getOption(NotesService::OPTION_POST_TYPES, null),
+        ];
+        error_log('NotesForPostType: saved options via Helper: ' . print_r($saved, true));
 
         $page = new Page(__('Notes for Post Type', 'jankx'), [], 'dashicons-before dashicons-edit-page');
         $page->setId(self::PAGE_ID);

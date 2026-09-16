@@ -2,6 +2,8 @@
 
 namespace Jankx\Extensions\NotesForPostType\Services;
 
+use Jankx\Adapter\Options\Helper;
+
 /**
  * Notes Service
  *
@@ -22,7 +24,7 @@ class NotesService
     protected $allowedPostTypes = null;
 
     /**
-     * Get raw option value from jankx_options
+     * Get raw option value using Helper
      *
      * @param string $key Option key
      * @param mixed $default Default value
@@ -30,16 +32,7 @@ class NotesService
      */
     public function getOption(string $key, $default = null)
     {
-        $themeMod = get_theme_mod($key);
-        if ($themeMod !== false && !is_null($themeMod)) {
-            return $themeMod;
-        }
-
-        $options = get_option('jankx_options', []);
-        if (is_array($options) && array_key_exists($key, $options)) {
-            return $options[$key];
-        }
-        return $default;
+        return Helper::getOption($key, $default);
     }
 
     /**
