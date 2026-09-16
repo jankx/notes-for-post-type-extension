@@ -64,7 +64,17 @@ class NotesForPostTypeExtension extends AbstractExtension
 
     public function register_hooks(): void
     {
-        $this->service->registerMeta();
+        // Defer register_post_meta until after custom post types have been
+        // registered. Custom post types register on `init` at priority 10–15,
+        // so we run at priority 20. Running earlier (during after_setup_theme
+        // when this extension boots) would compute the allowed-post-types list
+        // before those post types exist, caching only built-in types — which
+        // means add_meta_boxes would never see them on tour/place/etc.
+        if (did_action('init')) {
+            $this->service->registerMeta();
+        } else {
+            add_action('init', [$this->service, 'registerMeta'], 20);
+        }
 
         $optionsIntegration = new ThemeOptionsIntegration($this->service);
         $optionsIntegration->register();
