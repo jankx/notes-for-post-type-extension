@@ -87,6 +87,7 @@ class ThemeOptionsIntegration
                 'value' => $saved[NotesService::OPTION_ENABLED] ?? 1,
                 'default' => 1,
                 'description' => __('Master switch for post type notes', 'jankx'),
+                'option_name' => NotesService::OPTION_ENABLED,
             ]
         ));
 
@@ -100,6 +101,7 @@ class ThemeOptionsIntegration
                 'default' => $this->getDefaultPostTypes(),
                 'layout' => 'vertical',
                 'description' => __('Select post types that support internal notes. Can also be overridden via the jankx/notes-for-post-type/post-types filter.', 'jankx'),
+                'option_name' => NotesService::OPTION_POST_TYPES,
             ]
         ));
 
