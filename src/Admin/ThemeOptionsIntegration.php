@@ -63,11 +63,8 @@ class ThemeOptionsIntegration
             }
         }
 
-        $saved = [
-            NotesService::OPTION_ENABLED => $this->service->getOption(NotesService::OPTION_ENABLED, 1),
-            NotesService::OPTION_POST_TYPES => $this->service->getOption(NotesService::OPTION_POST_TYPES, null),
-        ];
-        error_log('NotesForPostType: saved options: ' . print_r($saved, true));
+        $saved = get_option('jankx_options', []);
+        error_log('NotesForPostType: saved options from jankx_options: ' . print_r($saved, true));
 
         $page = new Page(__('Notes for Post Type', 'jankx'), [], 'dashicons-before dashicons-edit-page');
         $page->setId(self::PAGE_ID);
@@ -87,7 +84,6 @@ class ThemeOptionsIntegration
                 'value' => $saved[NotesService::OPTION_ENABLED] ?? 1,
                 'default' => 1,
                 'description' => __('Master switch for post type notes', 'jankx'),
-                'option_name' => NotesService::OPTION_ENABLED,
             ]
         ));
 
@@ -101,7 +97,6 @@ class ThemeOptionsIntegration
                 'default' => $this->getDefaultPostTypes(),
                 'layout' => 'vertical',
                 'description' => __('Select post types that support internal notes. Can also be overridden via the jankx/notes-for-post-type/post-types filter.', 'jankx'),
-                'option_name' => NotesService::OPTION_POST_TYPES,
             ]
         ));
 
