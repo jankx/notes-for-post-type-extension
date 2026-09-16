@@ -54,7 +54,6 @@ class ThemeOptionsIntegration
             return;
         }
 
-        error_log('NotesForPostType: framework found, instance_name: ' . $framework->instance_name);
         error_log('NotesForPostType: framework found, pages count: ' . count($framework->pages ?? []));
 
         foreach ($framework->pages as $existing) {
@@ -64,8 +63,8 @@ class ThemeOptionsIntegration
             }
         }
 
-        $saved = get_option($framework->instance_name, []);
-        error_log('NotesForPostType: saved options from ' . $framework->instance_name . ': ' . print_r($saved, true));
+        $saved = get_option('jankx_options', []);
+        error_log('NotesForPostType: saved options from jankx_options: ' . print_r($saved, true));
 
         $page = new Page(__('Notes for Post Type', 'jankx'), [], 'dashicons-before dashicons-edit-page');
         $page->setId(self::PAGE_ID);
