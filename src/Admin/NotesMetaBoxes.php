@@ -30,6 +30,7 @@ class NotesMetaBoxes
     {
         add_action('add_meta_boxes', [$this, 'addMetaBoxes']);
         add_action('save_post', [$this, 'saveMetaBoxes']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
     }
 
     /**
@@ -50,10 +51,19 @@ class NotesMetaBoxes
     }
 
     /**
-     * Render the notes metabox.
-     *
-     * Uses the full WordPress editor (wp_editor) so admins can compose
-     * rich content, not just plain text.
+     * Enqueue editor assets so wp_editor works in Gutenberg context.
+     */
+    public function enqueueAssets(string $hook): void
+    {
+        if (!in_array($hook, ['post.php', 'post-new.php'], true)) {
+            return;
+        }
+
+        wp_enqueue_editor();
+    }
+
+    /**
+     * Render the notes metabox using wp_editor.
      *
      * @param \WP_Post $post Current post object.
      */
@@ -73,7 +83,6 @@ class NotesMetaBoxes
                 'teeny'         => false,
                 'tinymce'       => true,
                 'quicktags'     => true,
-                'wpautop'       => true,
             ]
         );
     }
