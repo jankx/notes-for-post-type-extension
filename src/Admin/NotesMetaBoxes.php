@@ -7,9 +7,8 @@ use Jankx\Extensions\NotesForPostType\Services\NotesService;
 /**
  * Notes MetaBoxes
  *
- * Adds a "Ghi chú" (Notes) metabox using the WordPress WYSIWYG editor
- * (TinyMCE) to every post type configured to support notes in the
- * Theme Options panel.
+ * Adds a "Ghi chú" (Notes) metabox with a plain textarea to every post
+ * type configured to support notes in the Theme Options panel.
  *
  * @package Jankx\Extensions\NotesForPostType\Admin
  */
@@ -18,7 +17,6 @@ class NotesMetaBoxes
     const NONCE_NAME = 'jankx_notes_meta_nonce';
     const NONCE_ACTION = 'jankx_notes_meta_action';
 
-    const EDITOR_ID = 'jankx_notes';
     const FIELD_NAME = 'jankx_notes';
 
     /**
@@ -35,7 +33,6 @@ class NotesMetaBoxes
     {
         add_action('add_meta_boxes', [$this, 'addMetaBoxes']);
         add_action('save_post', [$this, 'saveMetaBoxes']);
-        add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
     }
 
     /**
@@ -60,19 +57,7 @@ class NotesMetaBoxes
     }
 
     /**
-     * Load the WYSIWYG editor assets on post edit screens.
-     */
-    public function enqueueAssets(string $hook): void
-    {
-        if (!in_array($hook, ['post.php', 'post-new.php'], true)) {
-            return;
-        }
-
-        wp_enqueue_editor();
-    }
-
-    /**
-     * Render the notes metabox with the full WYSIWYG editor.
+     * Render the notes metabox with a plain textarea.
      *
      * @param \WP_Post $post Current post object.
      */
@@ -81,21 +66,15 @@ class NotesMetaBoxes
         wp_nonce_field(self::NONCE_ACTION, self::NONCE_NAME);
 
         $note = $this->service->getNote($post->ID);
-
-        wp_editor(
-            $note,
-            self::EDITOR_ID,
-            [
-                'textarea_name' => self::FIELD_NAME,
-                'textarea_rows' => 12,
-                'media_buttons' => true,
-                'teeny'         => false,
-                'tinymce'       => true,
-                'quicktags'     => true,
-                'dfw'           => true,
-                'editor_class'  => 'jankx-notes-editor',
-            ]
-        );
+        ?>
+        <textarea
+            name="<?php echo esc_attr(self::FIELD_NAME); ?>"
+            id="<?php echo esc_attr(self::FIELD_NAME); ?>"
+            class="large-text jankx-notes-textarea"
+            rows="10"
+            placeholder="<?php esc_attr_e('Nhập ghi chú nội bộ cho bài viết này…', 'jankx'); ?>"
+        ><?php echo esc_textarea($note); ?></textarea>
+        <?php
     }
 
     /**
@@ -116,7 +95,7 @@ class NotesMetaBoxes
         }
 
         $note = isset($_POST[self::FIELD_NAME])
-            ? wp_kses_post(wp_unslash($_POST[self::FIELD_NAME]))
+            ? sanitize_textarea_field(wp_unslash($_POST[self::FIELD_NAME]))
             : '';
 
         $this->service->saveNote($postId, $note);
