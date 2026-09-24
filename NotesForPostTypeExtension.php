@@ -10,8 +10,8 @@ use Jankx\Extensions\NotesForPostType\Admin\NotesMetaBoxes;
 /**
  * Notes for Post Type Extension
  *
- * Adds an internal notes metabox (WYSIWYG editor) to the post types
- * selected in the Theme Options panel, rendered via the post-notes block.
+ * Adds an internal notes metabox (textarea) to the post types selected
+ * in the Theme Options panel, rendered via the post-notes block.
  *
  * @package Jankx\Extensions\NotesForPostType
  */
