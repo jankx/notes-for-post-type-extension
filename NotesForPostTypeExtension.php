@@ -5,13 +5,12 @@ namespace Jankx\Extensions\NotesForPostType;
 use Jankx\Extensions\AbstractExtension;
 use Jankx\Extensions\NotesForPostType\Services\NotesService;
 use Jankx\Extensions\NotesForPostType\Admin\ThemeOptionsIntegration;
-use Jankx\Extensions\NotesForPostType\Admin\NotesMetaBoxes;
 
 /**
  * Notes for Post Type Extension
  *
- * Adds an internal notes metabox to selected post types,
- * with settings managed through the Jankx Theme Options panel.
+ * Manages internal notes per post, with settings managed through the
+ * Jankx Theme Options panel and rendered via the post-notes block.
  *
  * @package Jankx\Extensions\NotesForPostType
  */
@@ -83,11 +82,6 @@ class NotesForPostTypeExtension extends AbstractExtension
             $this->registerBlocks();
         } else {
             add_action('init', [$this, 'registerBlocks']);
-        }
-
-        if (is_admin()) {
-            $metaBoxes = new NotesMetaBoxes($this->service);
-            $metaBoxes->register();
         }
     }
 
