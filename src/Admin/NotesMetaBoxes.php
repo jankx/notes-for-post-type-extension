@@ -7,8 +7,8 @@ use Jankx\Extensions\NotesForPostType\Services\NotesService;
 /**
  * Notes MetaBoxes
  *
- * Adds a "Ghi chú" (Notes) metabox with a plain textarea to every post
- * type configured to support notes in the Theme Options panel.
+ * Adds a "Ghi chú" (Notes) metabox with a WordPress classic editor (TinyMCE)
+ * to every post type configured to support notes in the Theme Options panel.
  *
  * @package Jankx\Extensions\NotesForPostType\Admin
  */
@@ -57,7 +57,7 @@ class NotesMetaBoxes
     }
 
     /**
-     * Render the notes metabox with a plain textarea.
+     * Render the notes metabox with a WordPress classic editor (TinyMCE).
      *
      * @param \WP_Post $post Current post object.
      */
@@ -66,15 +66,18 @@ class NotesMetaBoxes
         wp_nonce_field(self::NONCE_ACTION, self::NONCE_NAME);
 
         $note = $this->service->getNote($post->ID);
-        ?>
-        <textarea
-            name="<?php echo esc_attr(self::FIELD_NAME); ?>"
-            id="<?php echo esc_attr(self::FIELD_NAME); ?>"
-            class="large-text jankx-notes-textarea"
-            rows="10"
-            placeholder="<?php esc_attr_e('Nhập ghi chú nội bộ cho bài viết này…', 'jankx'); ?>"
-        ><?php echo esc_textarea($note); ?></textarea>
-        <?php
+
+        wp_editor($note, self::FIELD_NAME, [
+            'textarea_name' => self::FIELD_NAME,
+            'textarea_rows' => 10,
+            'media_buttons' => false,
+            'teeny'         => false,
+            'quicktags'     => true,
+            'tinymce'       => [
+                'toolbar1' => 'bold,italic,underline,strikethrough,bullist,numlist,blockquote,hr,link,unlink,undo,redo',
+                'toolbar2' => '',
+            ],
+        ]);
     }
 
     /**
@@ -95,7 +98,7 @@ class NotesMetaBoxes
         }
 
         $note = isset($_POST[self::FIELD_NAME])
-            ? sanitize_textarea_field(wp_unslash($_POST[self::FIELD_NAME]))
+            ? wp_kses_post(wp_unslash($_POST[self::FIELD_NAME]))
             : '';
 
         $this->service->saveNote($postId, $note);
