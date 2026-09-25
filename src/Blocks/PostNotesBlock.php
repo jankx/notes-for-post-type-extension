@@ -54,6 +54,7 @@ class PostNotesBlock extends Block
 
         $wrapperAttrs = get_block_wrapper_attributes([
             'class' => 'wp-block-jankx-post-notes jankx-post-notes' . ($isEditor ? ' is-editor-preview' : ''),
+            'style' => $this->resolveBlockGapStyle($attributes),
         ]);
 
         ob_start();
@@ -71,6 +72,37 @@ class PostNotesBlock extends Block
         </<?php echo esc_attr($tagName); ?>>
         <?php
         return ob_get_clean();
+    }
+
+    protected function resolveBlockGapStyle(array $attributes): string
+    {
+        $rawGap = $attributes['style']['spacing']['blockGap'] ?? null;
+        if ($rawGap === null || $rawGap === '') {
+            return '';
+        }
+
+        $gap = function_exists('wp_sanitize_block_gap_value')
+            ? wp_sanitize_block_gap_value($rawGap)
+            : $rawGap;
+
+        if (is_array($gap)) {
+            $gap = $gap['vertical'] ?? ($gap['top'] ?? ($gap['left'] ?? ''));
+        }
+
+        if (!is_string($gap)) {
+            return '';
+        }
+
+        $gap = trim($gap);
+        if ($gap === '') {
+            return '';
+        }
+
+        if (!preg_match('/^-?(?:\d+|\d*\.\d+)(?:px|rem|em|%|vh|vw|vmin|vmax|ch|ex|pt|cm|mm|in|pc|q)$/', $gap)) {
+            return '';
+        }
+
+        return '--wp--style--block-gap:' . $gap;
     }
 
     protected function resolvePostId($block): int
